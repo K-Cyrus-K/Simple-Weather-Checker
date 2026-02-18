@@ -2,7 +2,6 @@
 const currentLocationBtn = document.getElementById("current-location-btn");
 
 if (currentLocationBtn) {
-
   currentLocationBtn.addEventListener("click", () => {
     currentLocationBtn.querySelector("i").classList.remove("text-red-600", "fa-shake");
     currentLocationBtn.querySelector("i").classList.remove("fa-location-dot");
@@ -17,6 +16,8 @@ if (currentLocationBtn) {
       const crd = pos.coords;
       let latitude = crd.latitude;
       let longitude = crd.longitude;
+
+      alert(`Lat: ${latitude}, Lon: ${longitude}`); 
 
       getCurrentLocation(latitude, longitude);
     }
