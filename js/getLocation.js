@@ -25,6 +25,7 @@ if (currentLocationBtn) {
       currentLocationBtn.querySelector("i").classList.remove("fa-spinner", "fa-spin");
       currentLocationBtn.querySelector("i").classList.add("fa-triangle-exclamation", "fa-shake", "text-red-600");
 
+      alert(`ERROR(${err.code}): ${err.message}`);
       console.warn(`ERROR(${err.code}): ${err.message}`);
     }
 
