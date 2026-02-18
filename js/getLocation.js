@@ -39,8 +39,9 @@ if (currentLocationBtn) {
 
     if (currentLocation.ok) {
       const data = await currentLocation.json();
-      const userLanguage = navigator.language || navigator.userLanguage; // ユーザーの言語を取得
-      checkWeather(data[0].local_names[userLanguage]);
+
+      const city = (data[0].local_name && data[0].local_names[getUserLanguage()]) ?
+        checkWeather(data[0].local_names[getUserLanguage()]) : checkWeather(data[0].name);
     }
 
     currentLocationBtn.querySelector("i").classList.remove("text-red-600", "fa-shake");

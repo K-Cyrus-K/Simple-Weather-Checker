@@ -1,6 +1,5 @@
-const userLanguage = navigator.language || navigator.userLanguage; // ユーザーの言語を取得
 const apiKey = "719ef5deeb910b0ac78f8c55c6da48c7";
-const apiUrl = `https://api.openweathermap.org/data/2.5/weather?units=metric&lang=${userLanguage}&q=`;
+const apiUrl = `https://api.openweathermap.org/data/2.5/weather?units=metric&lang=${getUserLanguage()}&q=`;
 
 const searchBox = document.querySelector("#search input");
 const searchBtn = document.querySelector("#search-btn");
@@ -96,7 +95,6 @@ async function checkWeather(city) {
 
     console.log(data);
 
-
     const cityLink = document.querySelector("#city-link");
     cityLink.textContent = data.name;
     cityLink.setAttribute('href', `https://maps.google.com/?q=${data.coord.lat},${data.coord.lon}`);
@@ -105,7 +103,7 @@ async function checkWeather(city) {
     function getCountryName(countryCode) {
       try {
         // Create an instance of Intl.DisplayNames for the 'region' type
-        const regionNames = new Intl.DisplayNames([userLanguage], { type: 'region' });
+        const regionNames = new Intl.DisplayNames([getUserLanguage()], { type: 'region' });
         // Use the 'of' method to get the name
         return regionNames.of(countryCode.toUpperCase()); // Use uppercase for reliability
       } catch (error) {
