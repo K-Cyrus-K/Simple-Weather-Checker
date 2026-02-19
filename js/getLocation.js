@@ -1,48 +1,66 @@
-// 現在地を取得
 const currentLocationBtn = document.getElementById("current-location-btn");
 
 if (currentLocationBtn) {
+  const icon = currentLocationBtn.querySelector("i");
+
+  // アイコンの状態を切り替えるユーティリティ
+  function setLocationIconState(state) {
+    icon.classList.remove("text-red-600", "fa-shake", "fa-location-dot", "fa-spinner", "fa-spin", "fa-triangle-exclamation");
+
+    switch (state) {
+      case "loading":
+        icon.classList.add("fa-spinner", "fa-spin");
+        break;
+      case "error":
+        icon.classList.add("fa-triangle-exclamation", "fa-shake", "text-red-600");
+        break;
+      case "default":
+      default:
+        icon.classList.add("fa-location-dot");
+        break;
+    }
+  }
+
+  // 位置情報から都市名を取得し、天気をチェックする
+  async function fetchCityAndCheckWeather(lat, lon) {
+    try {
+      const url = `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`;
+      const response = await fetch(url);
+
+      if (!response.ok) throw new Error("逆ジオコーディングに失敗しました");
+
+      const data = await response.json();
+      if (data.length === 0) throw new Error("場所が見つかりませんでした");
+
+      const userLang = getUserLanguage();
+      const cityName = (data[0].local_names && data[0].local_names[userLang])
+        ? data[0].local_names[userLang]
+        : data[0].name;
+
+      checkWeather(cityName);
+      setLocationIconState("default");
+    } catch (err) {
+      console.error(err);
+      setLocationIconState("error");
+    }
+  }
 
   currentLocationBtn.addEventListener("click", () => {
-    currentLocationBtn.querySelector("i").classList.remove("text-red-600", "fa-shake");
-    currentLocationBtn.querySelector("i").classList.remove("fa-location-dot");
-    currentLocationBtn.querySelector("i").classList.add("fa-spinner", "fa-spin");
+    setLocationIconState("loading");
+
     const options = {
       enableHighAccuracy: true,
       timeout: 5000,
       maximumAge: 60000,
     };
 
-    function success(pos) {
-      const crd = pos.coords;
-      let latitude = crd.latitude;
-      let longitude = crd.longitude;
-
-      getCurrentLocation(latitude, longitude);
-    }
-
-    function error(err) {
-      currentLocationBtn.querySelector("i").classList.remove("fa-spinner", "fa-spin");
-      currentLocationBtn.querySelector("i").classList.add("fa-triangle-exclamation", "fa-shake", "text-red-600");
-
-      alert(`ERROR(${err.code}): ${err.message}`);
-      console.warn(`ERROR(${err.code}): ${err.message}`);
-    }
-
-    navigator.geolocation.getCurrentPosition(success, error, options);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => fetchCityAndCheckWeather(pos.coords.latitude, pos.coords.longitude),
+      (err) => {
+        console.warn(`ERROR(${err.code}): ${err.message}`);
+        setLocationIconState("error");
+      },
+      options
+    );
   });
-
-  async function getCurrentLocation(latitude, longitude) {
-    const reverseLocationApiUrl = `https://api.openweathermap.org/geo/1.0/reverse?lat=${latitude}&lon=${longitude}&limit=1&&appid=${apiKey}`;
-    const currentLocation = await fetch(reverseLocationApiUrl);
-    if (currentLocation.ok) {
-      const data = await currentLocation.json();
-      const userLanguage = navigator.language || navigator.userLanguage; // ユーザーの言語を取得
-      checkWeather(data[0].local_names[userLanguage]);
-    }
-
-    currentLocationBtn.querySelector("i").classList.remove("text-red-600", "fa-shake");
-    currentLocationBtn.querySelector("i").classList.remove("fa-spinner", "fa-spin");
-    currentLocationBtn.querySelector("i").classList.add("fa-location-dot");
-  }
 }

@@ -2,7 +2,7 @@
     position: relative;
 }
 
-.tooltip-text {
+.tooltip-text { 
     visibility: hidden;
     width: fit-content;
     background-color: #555;

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ja" class="box-border">
+<html lang="ja">
 
 <head>
   <meta charset="UTF-8" />
@@ -15,92 +15,100 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body class="bg-gray-800 flex h-screen items-center justify-center">
+<body class="flex justify-center items-center bg-gray-900 h-screen text-white">
+
   <div id="card"
-    class="bg-linear-to-br from-emerald-500 to-blue-500 text-white rounded-3xl py-6 sm:py-10 px-5 sm:px-9 text-center z-999">
+    class="z-50 bg-linear-to-br from-emerald-500 to-blue-500 shadow-2xl px-5 sm:px-9 py-6 sm:py-10 rounded-3xl w-[95%] sm:w-[550px] max-h-[95dvh] overflow-y-auto text-center">
 
     <div class="flex">
-      <span class="font-bold flex rounded-2xl p-4 w-fit mb-2 -mt-4 text-base sm:text-lg">簡易天気チェッカー</span>
+      <span class="flex -mt-4 mb-2 p-4 rounded-2xl w-fit font-bold text-base sm:text-lg">簡易天気チェッカー</span>
       <span id="current-time"
-        class="font-bold flex justify-end ml-auto rounded-2xl p-4 w-fit mb-2 -mt-4 text-base sm:text-lg"></span>
+        class="flex justify-end -mt-4 mb-2 ml-auto p-4 rounded-2xl w-fit font-bold text-base sm:text-lg"></span>
     </div>
 
     <!-- 検索バー -->
-    <div id="search" class="w-full flex items-center bg-white rounded-3xl sm:rounded-4xl shadow-lg">
+    <div id="search" class="flex items-center bg-white shadow-lg rounded-3xl sm:rounded-4xl w-full">
       <input type="search" name="search-bar" id="search-bar" placeholder="国、市名を入力してください…" spellcheck="false"
-        class="flex border-0 outline-0 bg-transparent text-[#555] py-2 sm:py-2.5 sm:px-6 px-4 h-12 sm:h-16 text-base mr-4 sm:text-xl" />
+        class="flex flex-1 bg-transparent mr-4 px-4 sm:px-6 py-2 sm:py-2.5 border-0 outline-0 min-w-0 h-12 sm:h-16 text-[#555] text-base sm:text-xl" />
 
       <!-- 検索アイコン -->
       <button id="search-btn"
-        class="tooltip-container mr-3 border-0 outline-none bg-emerald-100 rounded-full w-12 h-12 sm:w-16 sm:h-16 shadow-2xl my-2 cursor-pointer flex items-center justify-center transition duration-300">
-        <i class="fa-solid fa-magnifying-glass text-gray-600 "></i>
+        class="flex flex-none justify-center items-center bg-emerald-100 hover:bg-emerald-100/90 shadow-2xl my-2 mr-1 border-0 rounded-full outline-none w-10 sm:w-16 h-10 sm:h-16 transition duration-300 cursor-pointer tooltip-container">
+        <i class="text-gray-600 fa-solid fa-magnifying-glass"></i>
         <span class="tooltip-text">検索</span>
       </button>
 
       <!-- 現在地の天気を取得 -->
       <button id="current-location-btn"
-        class="tooltip-container mr-3 border-0 outline-none bg-emerald-100 rounded-full w-12 h-12 sm:w-16 sm:h-16 shadow-2xl my-2 cursor-pointer flex items-center justify-center transition duration-300">
-        <i class="fa-solid fa-location-dot text-gray-600"></i>
-        <span class="tooltip-text">現在地の天気を取得</span>
+        class="flex flex-none justify-center items-center bg-emerald-100 shadow-2xl my-2 mr-1 border-0 rounded-full outline-none w-10 sm:w-16 h-10 sm:h-16 transition duration-300 cursor-pointer tooltip-container">
+        <i class="text-gray-600 fa-solid fa-location-dot"></i>
+        <span class="tooltip-text">現在地</span>
       </button>
 
       <!-- 設定アイコン -->
       <button id="setting-btn"
-        class="tooltip-container mr-3 border-0 outline-none bg-emerald-100 rounded-full w-12 h-12 sm:w-16 sm:h-16 shadow-2xl my-2 cursor-pointer flex items-center justify-center transition duration-300">
-        <i class="fa-solid fa-gear text-gray-600"></i>
+        class="flex flex-none justify-center items-center bg-emerald-100 shadow-2xl my-2 mr-3 border-0 rounded-full outline-none w-10 sm:w-16 h-10 sm:h-16 transition duration-300 cursor-pointer tooltip-container">
+        <i class="text-gray-600 fa-solid fa-gear"></i>
         <span class="tooltip-text">設定</span>
       </button>
     </div>
 
     <!-- エラーメッセージ -->
-    <div id="error"
-      class="-mb-2 mt-4 text-white font-black text-base sm:text-lg hidden bg-red-500 rounded-2xl py-3 sm:-mb-6">
+    <div id="error" class="hidden bg-red-500 mt-4 py-3 rounded-2xl font-black text-base sm:text-lg">
       <p>エラー: 正しい国、市名を入力してください。</p>
     </div>
 
-    <div id="weatherContainer" class="hidden">
+    <!-- 検索履歴 (Local Storage) -->
+    <div id="search-record" class="gap-2 sm:gap-3 grid grid-cols-3 mt-4 overflow-hidden font-bold text-gray-900"></div>
 
+    <!-- 天気の詳細コンテイナー -->
+    <div id="weather-container" class="hidden">
       <!-- 天気アイコン -->
-      <img src="" id="weather-icon" alt="" class="w-1/2 mt-12 mx-auto" />
+      <img src="" id="weather-icon" alt="" class="mx-auto mt-8 w-1/2 max-w-[180px]" />
 
       <!-- 気温 -->
-      <div class="items-center justify-center mb-4 font-bold">
-        <h1 id="main-temp" class="text-[4rem] sm:text-[5.5rem]"></h1>
+      <div id="temp-container" class="justify-center items-center mb-4 font-bold">
+        <div class="flex flex-col items-center text-base sm:text-lg">
 
-        <div class="flex flex-col ml-4 items-center text-base sm:text-lg">
+          <!-- 主温度 -->
+          <h1 id="main-temp" class="my-2 text-[3.5rem] sm:text-[5rem] leading-none"></h1>
           <!-- 体感温度 -->
-          <span id="temp-feels"></span>
-          <div class="flex gap-6 mt-1 mb-2">
+          <h3 id="temp-feels"></h3>
+
+          <div class="flex gap-4 mt-1 mb-2">
             <!-- 最高気温 -->
             <span id="temp-max" class="text-orange-200"></span>
             <!-- 最低気温 -->
             <span id="temp-min" class="text-blue-100"></span>
           </div>
+
         </div>
       </div>
 
       <!-- 国名・都市名 -->
-      <h2 id="city" class="text-4xl sm:text-5xl font-bold">
-        <a id="city-link" href="" target="_blank" rel="noopener noreferrer"></a>
-      </h2>
-      <h4 id="country-name" class="text-lg sm:text-xl"></h4>
+      <div class="px-2">
+        <h2 id="city" class="font-bold text-3xl sm:text-4xl wrap-break-word">
+          <a id="city-link" href="" target="_blank" rel="noopener noreferrer"></a>
+        </h2>
+        <h4 id="country-name" class="text-lg sm:text-xl"></h4>
+      </div>
 
-      <div id="details" class="flex items-center justify-between py-0 px-4 sm:px-5 mt-4 sm:mt-6">
+      <div id="details" class="flex flex-wrap justify-between items-center gap-y-4 mt-6 px-1 sm:px-2">
         <!-- 湿度データ -->
-        <div id="humidity" class="flex items-center text-left">
-          <img src="./img/humidity.svg" alt="湿度アイコン" class="w-16 sm:w-20 mr-2" />
+        <div id="humidity" class="flex flex-1 justify-center sm:justify-start items-center min-w-[120px] text-left">
+          <img src="./img/humidity.svg" alt="湿度アイコン" class="mr-2 w-12 sm:w-16" />
           <div>
-            <p class="text-xl sm:text-2xl -mt-1.5"></p>
-            <p>湿度</p>
+            <p class="font-bold text-lg sm:text-xl"></p>
+            <p class="text-xs sm:text-sm">湿度</p>
           </div>
         </div>
 
         <!-- 風速データ -->
-        <div id="wind" class="flex items-center text-left">
-          <img src="./img/wind.svg" alt="風速アイコン" class="w-16 sm:w-20" />
+        <div id="wind" class="flex flex-1 justify-center sm:justify-start items-center min-w-[120px] text-left">
+          <img src="./img/wind.svg" alt="風速アイコン" class="mr-2 w-12 sm:w-16" />
           <div>
-            <p class="text-xl sm:text-2xl -mt-1.5"></p>
-            <p>風速</p>
+            <p class="font-bold text-lg sm:text-xl"></p>
+            <p class="text-xs sm:text-sm">風速</p>
           </div>
         </div>
       </div>
@@ -109,28 +117,34 @@
 
   <!-- 設定パネル -->
   <div id="setting"
-    class="bg-linear-to-br from-emerald-500 to-blue-500 text-white rounded-3xl py-6 sm:py-10 px-5 sm:px-9 text-center hidden flex items-center justify-center z-50">
-    <label class="relative inline-flex items-center cursor-pointer">
+    class="hidden flex justify-center items-center bg-linear-to-br from-emerald-500 to-blue-500 px-5 sm:px-9 py-6 sm:py-10 rounded-3xl">
+    <label class="inline-flex relative items-center cursor-pointer">
       <input type="checkbox" value="" class="sr-only peer" id="temp-unit">
-      <div class="group peer ring-0 bg-emerald-500 text-black 
-              rounded-full outline-none duration-300 after:duration-300 
-              w-22 h-10 shadow-md
-              peer-focus:outline-none after:content-['°C'] 
-              after:rounded-full after:absolute after:bg-gray-50 
-              after:outline-none after:h-8 after:w-8 after:top-1 
-              after:left-1 after:-rotate-360 after:flex after:justify-center 
-              after:items-center peer-checked:after:translate-x-12 
-              peer-checked:after:content-['°F'] peer-hover:after:scale-95 
-              peer-checked:after:rotate-0">
-      </div><span class="font-bold ml-5 text-nowrap">温度単位</span>
+      <span
+        class="group peer after:top-1 after:left-1 after:absolute after:flex after:justify-center after:items-center bg-emerald-500 after:bg-gray-50 shadow-md rounded-full after:rounded-full outline-none after:outline-none peer-focus:outline-none ring-0 w-22 after:w-8 h-10 after:h-8 text-black after:content-['°C'] peer-checked:after:content-['°F'] after:-rotate-360 peer-checked:after:rotate-0 peer-hover:after:scale-95 peer-checked:after:translate-x-12 duration-300 after:duration-300">
+      </span><span class="ml-5 font-bold text-nowrap">温度単位</span>
     </label>
+
+
   </div>
 
-  <div class="absolute right-3 bottom-2">
-    <span class="text-sm text-stone-400">Weather data provided by <a href="https://openweathermap.org/" target="_blank"
+  <!-- Copyright text & Credits -->
+  <div class="bottom-2 left-3 absolute">
+    <span class="text-stone-400 text-sm">&copy; <span id="current-year"></span> Cyrus Kwan. All Rights Reserved.</span>
+  </div>
+  <div class="right-3 bottom-2 absolute">
+    <span class="text-stone-400 text-sm">Weather data provided by <a href="https://openweathermap.org/" target="_blank"
         rel="noopener noreferrer">OpenWeatherMap.org</a></span>
-
   </div>
+
+  <!-- 検索履歴用テンプレ -->
+  <template id="search-record-bubble">
+    <div
+      class="flex bg-white/60 hover:bg-white/80 shadow-2xl p-3 border-2 border-white rounded-full max-w-[25dvw] whitespace-nowrap cursor-pointer">
+      <div class="text-gray-900/40"><i class="hover:text-gray-900 fa-solid fa-xmark"></i></div>
+      <div class="ml-[10%] max-w-[13ch] truncate line-clamp-1 text-pretty record-text"></div>
+    </div>
+  </template>
 </body>
 
 </html>
